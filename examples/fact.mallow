@@ -1,0 +1,10 @@
+define fact x as
+    match x
+    | 0 -> 1
+    | _ -> x * fact (x-1)
+end
+
+define even? x as
+    (x mod 2) = 0
+end
+
