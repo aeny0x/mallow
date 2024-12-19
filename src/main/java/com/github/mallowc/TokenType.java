@@ -27,6 +27,7 @@ public enum TokenType {
     THEN,
     ELSE,
     PUTS,
+    MODULO,
 
     // Characters
     LPAREN, RPAREN,

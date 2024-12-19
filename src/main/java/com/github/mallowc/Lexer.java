@@ -27,6 +27,7 @@ public class Lexer {
         keywords.put("else", TokenType.ELSE);
         keywords.put("or", TokenType.OR);
         keywords.put("and", TokenType.AND);
+        keywords.put("mod", TokenType.MODULO);
     }
 
     private TokenType lookUpIdentifier(String s) {
