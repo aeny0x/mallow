@@ -48,6 +48,8 @@ public class Parser {
         registerPrefix(TokenType.NOT, this::parsePrefix);
         registerPrefix(TokenType.MINUS, this::parsePrefix);
         registerPrefix(TokenType.LPAREN, this::parseGrouped);
+        registerPrefix(TokenType.IF, this::parseIf);
+        registerPrefix(TokenType.LAMBDA, this::parseFunction);
 
         registerInfix(TokenType.PLUS, this::parseInfix);
         registerInfix(TokenType.MINUS, this::parseInfix);
@@ -57,6 +59,7 @@ public class Parser {
         registerInfix(TokenType.NOT_EQUAL, this::parseInfix);
         registerInfix(TokenType.GT, this::parseInfix);
         registerInfix(TokenType.LT, this::parseInfix);
+        registerInfix(TokenType.MODULO, this::parseInfix);
 
 
         /* END PARSE FUNCTIONS   */
@@ -121,6 +124,7 @@ public class Parser {
         precedences.put(TokenType.MINUS, Precedence.SUM);
         precedences.put(TokenType.ASTERISK, Precedence.PRODUCT);
         precedences.put(TokenType.SLASH, Precedence.PRODUCT);
+        precedences.put(TokenType.MODULO, Precedence.PRODUCT);
     }
 
     private Precedence peekPrecedence() {
@@ -237,6 +241,48 @@ public class Parser {
             return null;
         }
         return expr;
+    }
+
+    Expression parseIf() {
+        IfExpression expr = new IfExpression(current);
+
+        advance();
+        expr.conditional = parseExpression(Precedence.LOWEST);
+
+        if (!peek(TokenType.THEN)) {
+            return null;
+        }
+
+        advance();
+        expr.consequence = parseExpression(Precedence.LOWEST);
+
+        if (peekIs(TokenType.ELSE)) {
+            advance();
+            advance();
+            expr.alternative = parseExpression(Precedence.LOWEST);
+        }
+        return expr;
+
+    }
+
+    Expression parseFunction() {
+        // lambda <formal parameter> . <expression>
+        FunctionLiteral literal = new FunctionLiteral(current);
+
+        if (!peek(TokenType.IDENTIFIER)) {
+            return null;
+        }
+
+        literal.parameter = new Identifier(current, current.literal);
+
+        if (!peek(TokenType.DOT)) {
+            return null;
+        }
+
+        advance();
+        literal.body = parseExpression(Precedence.LOWEST);
+        return literal;
+
     }
 
 

@@ -1,5 +1,11 @@
-define x as
-    20 + (3920 - 29) * 5
+define even? as
+    lambda x . (x mod 2) = 0
 end
 
+define odd? as
+    lambda x . (x mod 2) ~= 0
+end
 
+define sum as
+    lambda x . lambda y . x + y
+end

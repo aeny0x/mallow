@@ -8,7 +8,7 @@ public enum TokenType {
 
     // Keywords
     DEFINE, AS, END,
-    MATCH,
+    LAMBDA,
     TRUE,
     FALSE,
     NIL,
@@ -30,5 +30,5 @@ public enum TokenType {
 
     // Other
     ILLEGAL,
-    EOF, LAMBDA, DOT, SEMICOLON,
+    EOF, DOT, SEMICOLON,
 }

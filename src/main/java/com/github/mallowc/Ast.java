@@ -8,7 +8,7 @@ interface Node {
     String string();
 }
 
-interface Statement {
+interface Statement extends Node {
     Node no = null;
     void statementNode();
     String tokenLiteral();
@@ -16,7 +16,7 @@ interface Statement {
     String string();
 }
 
-interface Expression {
+interface Expression extends Node {
     Node no = null;
     void expressionNode();
     String string();
@@ -162,6 +162,7 @@ class InfixExpression implements Expression {
 }
 
 
+
 class DefineStmt implements Statement {
     Token token;
     Identifier name;
@@ -217,6 +218,72 @@ class ExpressionStatement implements Statement {
             return expr.string();
         }
         return "";
+    }
+}
+
+class IfExpression implements Expression {
+    Token token;
+    Expression conditional;
+    Expression consequence;
+    Expression alternative;
+
+    public IfExpression(Token current) {
+        token = current;
+    }
+
+    @Override
+    public void expressionNode() {
+
+    }
+
+    @Override
+    public String string() {
+        StringBuilder out = new StringBuilder();
+        out.append("if ");
+        out.append(conditional.string());
+        out.append(" ");
+        out.append(consequence.string());
+        if (alternative != null) {
+            out.append(" else ");
+            out.append(alternative.string());
+        }
+        return out.toString();
+
+    }
+
+    public String tokenLiteral() {
+        return token.literal;
+    }
+}
+
+class FunctionLiteral implements Expression {
+    Token token;
+    Identifier parameter;
+    Expression body;
+
+    public FunctionLiteral(Token current) {
+        token = current;
+    }
+
+    @Override
+    public void expressionNode() {
+
+    }
+
+    public String tokenLiteral() {
+        return token.literal;
+    }
+
+    @Override
+    public String string() {
+        StringBuilder out = new StringBuilder();
+        out.append("(");
+        out.append(parameter.string());
+        out.append(")");
+        out.append("(");
+        out.append(body.string());
+        out.append(")");
+        return out.toString();
     }
 }
 
