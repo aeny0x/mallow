@@ -22,12 +22,18 @@ public class Main {
 
 
     public static void main(String[] args) {
-        String source = loadFile("examples/script.mallow");
+        String source = loadFile("examples/test.mallow");
+        /*
         Lexer scanner = new Lexer(source);
         while (true) {
             Token t = scanner.nextToken();
             if (t.type == TokenType.EOF) break;
             System.out.println(t.type + " " + t.literal);
         }
+        */
+        Parser parser = new Parser(source);
+        Ast program = parser.parseProgram();
+        System.out.println(program.statements);
+        System.out.println(program.string());
     }
 }

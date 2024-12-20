@@ -30,5 +30,5 @@ public enum TokenType {
 
     // Other
     ILLEGAL,
-    EOF, LAMBDA, DOT,
+    EOF, LAMBDA, DOT, SEMICOLON,
 }
