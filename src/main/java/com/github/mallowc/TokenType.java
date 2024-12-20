@@ -1,11 +1,3 @@
-/*
-
-
-
-
-*/
-
-
 package com.github.mallowc;
 
 public enum TokenType {
@@ -38,5 +30,5 @@ public enum TokenType {
 
     // Other
     ILLEGAL,
-    EOF,
+    EOF, LAMBDA, DOT,
 }

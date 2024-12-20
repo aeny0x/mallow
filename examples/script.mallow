@@ -1,0 +1,15 @@
+define even? as
+    lambda x . (x mod 2) = 0
+end
+
+define odd? as
+    lambda x . (x mod 2) ~= 0
+end
+
+define sum as
+    lambda x . lambda y . x + y
+end
+
+sum 10 20
+
+even? (lambda x . x * 2) 10

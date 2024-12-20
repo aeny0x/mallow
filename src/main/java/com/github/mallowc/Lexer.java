@@ -15,7 +15,7 @@ public class Lexer {
     private void setKeywordTable() {
         keywords.put("define", TokenType.DEFINE);
         keywords.put("as", TokenType.AS);
-        keywords.put("match", TokenType.MATCH);
+        // keywords.put("match", TokenType.MATCH);
         keywords.put("end", TokenType.END);
         keywords.put("puts", TokenType.PUTS);
         keywords.put("true", TokenType.TRUE);
@@ -28,6 +28,7 @@ public class Lexer {
         keywords.put("or", TokenType.OR);
         keywords.put("and", TokenType.AND);
         keywords.put("mod", TokenType.MODULO);
+        keywords.put("lambda", TokenType.LAMBDA);
     }
 
     private TokenType lookUpIdentifier(String s) {
@@ -74,7 +75,7 @@ public class Lexer {
 
     private String readIdentifier() {
         int pos = position;
-        while (Character.isLetter(ch) || ch == '?') {
+        while (Character.isLetter(ch) || ch == '?' || Character.isDigit(ch)) {
             advance();
         }
         return input.substring(pos,position);
@@ -97,6 +98,10 @@ public class Lexer {
         }
     }
 
+    private boolean isAtEnd() {
+        return peek() == 0;
+    }
+
     public Token nextToken() {
         Token tok;
         skipWhiteSpace();
@@ -104,17 +109,19 @@ public class Lexer {
             case '"':
                 tok = new Token(TokenType.STRING, readString());
                 break;
-
             case '+':
                 tok = new Token(TokenType.PLUS, String.valueOf(ch));
                 break;
-
             case '-':
                 if (peek() == '>') {
                     tok = new Token(TokenType.ARROW, "->");
                 } else {
                     tok = new Token(TokenType.MINUS, String.valueOf(ch));
                 }
+                break;
+
+            case '.':
+                tok = new Token(TokenType.DOT, String.valueOf(ch));
                 break;
 
             case '/':
@@ -175,7 +182,6 @@ public class Lexer {
                 } else if (Character.isDigit(ch)) {
                     tok = new Token(TokenType.NUMBER, readNumber());
                     return tok;
-
                 } else {
                     tok = new Token(TokenType.ILLEGAL, String.valueOf(ch));
                     break;
@@ -185,4 +191,5 @@ public class Lexer {
         advance();
         return tok;
     }
+
 }

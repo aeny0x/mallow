@@ -22,7 +22,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        String source = loadFile("examples/fact.mallow");
+        String source = loadFile("examples/script.mallow");
         Lexer scanner = new Lexer(source);
         while (true) {
             Token t = scanner.nextToken();
