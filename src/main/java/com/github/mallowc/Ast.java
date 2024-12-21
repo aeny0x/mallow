@@ -9,7 +9,7 @@ interface Node {
 }
 
 interface Statement extends Node {
-    Node no = null;
+    // Node no = null;
     void statementNode();
     String tokenLiteral();
 
@@ -17,7 +17,7 @@ interface Statement extends Node {
 }
 
 interface Expression extends Node {
-    Node no = null;
+    // Node no = null;
     void expressionNode();
     String string();
 }

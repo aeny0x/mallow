@@ -1,0 +1,9 @@
+define x as 10 end
+define y as 20 end
+
+define even as
+    x mod 2 = 0
+end
+
+even
+

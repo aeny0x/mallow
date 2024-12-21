@@ -2,14 +2,51 @@ package com.github.mallowc;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 enum Opcode {
     CONSTANT,
     ADD, SUB, MUL, DIV,
     POP,
     TRUE, FALSE, EQUAL, NOT_EQUAL, GT, LT, NOT,
-    NEGATE,JUMP_IF_NOT_TRUE, NIL, JUMP
+    NEGATE,JUMP_IF_NOT_TRUE, NIL, JUMP,
+    MODULO, SET_GLOBAL, GET_GLOBAL
 }
+
+class Symbol {
+    String name;
+    String scope;
+    int index;
+    public Symbol(String n, int i, String s) {
+        name = n;
+        index = i;
+        scope = s;
+    }
+}
+
+class SymbolTable {
+    Map<String, Symbol> store;
+    int numDefinitions = 0;
+    final String GlobalScope = "GLOBAL_SCOPE";
+
+    public SymbolTable() {
+        store = new Hashtable<>();
+    }
+
+    public Symbol define(String name) {
+        Symbol s = new Symbol(name, numDefinitions, GlobalScope);
+        store.put(name, s);
+        numDefinitions++;
+        return s;
+    }
+
+    public Symbol resolve(String name) {
+        return store.get(name);
+    }
+
+}
+
 
 interface MallowObject {
     String string();
@@ -61,6 +98,7 @@ class Bytecode {
 public class Compiler {
     ArrayList<Byte> instructions;
     ArrayList<MallowObject> constant_pool;
+    SymbolTable TABLE = new SymbolTable();
 
     public Compiler() {
         constant_pool = new ArrayList<MallowObject>();
@@ -121,6 +159,9 @@ public class Compiler {
                 case "<":
                     emit(Opcode.LT);
                     break;
+                case "mod":
+                    emit(Opcode.MODULO);
+                    break;
 
                 default:
                     System.err.printf("Unknown operator %s", ((InfixExpression) node).operator);
@@ -173,9 +214,31 @@ public class Compiler {
             patch_jump(jumpPos, alternativeOffset);
 
 
+        } else if (node instanceof DefineStmt) {
+            Compile(((DefineStmt) node).value);
+            Symbol symbol = TABLE.define(((DefineStmt) node).name.value);
+            emitSymbol(Opcode.SET_GLOBAL, symbol.index);
+        } else if (node instanceof Identifier) {
+            Symbol symbol = TABLE.resolve(((Identifier) node).value);
+            if (symbol == null) {
+                System.err.printf("%s is undefined\n", ((Identifier) node).value);
+                System.exit(1);
+            } else {
+                emitSymbol(Opcode.GET_GLOBAL, symbol.index);
+            }
         }
-        System.err.println(instructions);
+
+
+
+        // System.err.println(instructions);
     }
+
+    private void emitSymbol(Opcode opcode, int index) {
+        emit(opcode);
+        instructions.add((byte) index);
+    }
+
+
     private int emitJump(Opcode opcode) {
         emit(opcode);
         instructions.add((byte) 0xff);

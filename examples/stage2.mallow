@@ -4,3 +4,5 @@ if 10 > 2 then 10 + 20 * 5 else 0
 if 10 < 2 then 10 + 20 * 5 else 0
 if 10 = 10 then true else false
 if 10 ~= 20 then true else false
+if 10 mod 2 = 0 then true else false
+if 15 mod 2 = 0 then true else false

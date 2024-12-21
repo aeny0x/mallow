@@ -13,10 +13,13 @@ public class Runtime {
     final MallowBoolean FALSE = new MallowBoolean(false);
     final MallowNil NIL = new MallowNil();
 
+    ArrayList<MallowObject> GLOBALS;
+
     public Runtime(Bytecode b) {
         STACK = new Stack<MallowObject>();
         constant_pool = b.constant_pool;
         instructions = b.instructions;
+        GLOBALS = new ArrayList<MallowObject>();
     }
 
     private void executeComparison(Byte operation) {
@@ -133,6 +136,22 @@ public class Runtime {
                 case 16:
                     offset = executeJump(IP+1, IP + 2);
                     IP = offset - 1;
+                    break;
+                case 17:
+                    a = (MallowInteger) STACK.pop();
+                    b = (MallowInteger) STACK.pop();
+                    result = new MallowInteger(b.value.remainder(a.value));
+                    STACK.add(result);
+                    break;
+                case 18:
+                    byte globalIndex = instructions.get(IP+1);
+                    IP += 1;
+                    GLOBALS.add(globalIndex, STACK.pop());
+                    break;
+                case 19:
+                    globalIndex = instructions.get(IP+1);
+                    IP += 1;
+                    STACK.add(GLOBALS.get(globalIndex));
                     break;
                 default:
                     System.err.println("opcode not implemented");
