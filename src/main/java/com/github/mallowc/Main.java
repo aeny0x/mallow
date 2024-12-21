@@ -22,10 +22,12 @@ public class Main {
 
 
     public static void main(String[] args) {
-        String source = loadFile("examples/test.mallow");
+        String source = loadFile("examples/stage2.mallow");
         Parser parser = new Parser(source);
-        System.out.println(parser.parseProgram().string());
-
-
+        Ast program = parser.parseProgram();
+        Compiler compiler = new Compiler();
+        compiler.Compile(program);
+        Runtime VM = new Runtime(compiler.bytecode());
+        VM.run();
     }
 }

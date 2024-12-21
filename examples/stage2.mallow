@@ -1,0 +1,4 @@
+-10 + 10
+not true
+not false
+not (10 > 2)
