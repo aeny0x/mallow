@@ -22,12 +22,16 @@ public class Main {
 
 
     public static void main(String[] args) {
-        String source = loadFile("examples/stage3.mallow");
-        Parser parser = new Parser(source);
-        Ast program = parser.parseProgram();
-        Compiler compiler = new Compiler();
-        compiler.Compile(program);
-        Runtime VM = new Runtime(compiler.bytecode());
-        VM.run();
+        if (!(args.length != 1)) {
+            System.err.println("usage: ./mallow <filepath>");
+        } else {
+            String source = loadFile("examples/stage3.mallow");
+            Parser parser = new Parser(source);
+            Ast program = parser.parseProgram();
+            Compiler compiler = new Compiler();
+            compiler.Compile(program);
+            Runtime VM = new Runtime(compiler.bytecode());
+            VM.run();
+        }
     }
 }

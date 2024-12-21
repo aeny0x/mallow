@@ -11,7 +11,8 @@ enum Opcode {
     POP,
     TRUE, FALSE, EQUAL, NOT_EQUAL, GT, LT, NOT,
     NEGATE,JUMP_IF_NOT_TRUE, NIL, JUMP,
-    MODULO, SET_GLOBAL, GET_GLOBAL
+    MODULO, SET_GLOBAL, GET_GLOBAL,
+    CALL
 }
 
 class Symbol {
@@ -51,6 +52,18 @@ class SymbolTable {
 interface MallowObject {
     String string();
 }
+
+class MallowCompiledFunction implements MallowObject {
+    ArrayList<Byte> instructions;
+
+
+    @Override
+    public String string() {
+        return String.format("compiled function %s" , this.toString());
+    }
+}
+
+
 
 class MallowInteger implements MallowObject {
     BigDecimal value;

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="mallowc:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/mallowc_jar</output-path>
+    <root id="archive" name="mallowc.jar">
+      <element id="module-output" name="mallowc" />
+    </root>
+  </artifact>
+</component>

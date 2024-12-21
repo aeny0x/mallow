@@ -5,5 +5,9 @@ define even as
     x mod 2 = 0
 end
 
-even
+define is? as
+    if x = y then true else false
+end
 
+even
+is?

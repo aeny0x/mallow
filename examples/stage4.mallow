@@ -1,0 +1,3 @@
+define five_plus_ten as
+    lambda x . 10 + 15
+end
