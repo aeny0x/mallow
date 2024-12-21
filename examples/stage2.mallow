@@ -1,4 +1,6 @@
--10 + 10
-not true
-not false
-not (10 > 2)
+if false then 10
+if true then 10
+if 10 > 2 then 10 + 20 * 5 else 0
+if 10 < 2 then 10 + 20 * 5 else 0
+if 10 = 10 then true else false
+if 10 ~= 20 then true else false

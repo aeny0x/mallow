@@ -8,9 +8,8 @@ enum Opcode {
     ADD, SUB, MUL, DIV,
     POP,
     TRUE, FALSE, EQUAL, NOT_EQUAL, GT, LT, NOT,
-    NEGATE
+    NEGATE,JUMP_IF_NOT_TRUE, NIL, JUMP
 }
-
 
 interface MallowObject {
     String string();
@@ -147,8 +146,61 @@ public class Compiler {
                 default:
                     System.err.printf("Unknown operator %s", ((PrefixExpression) node).operator);
             }
-        }
+        } else if (node instanceof IfExpression) {
+            Compile(((IfExpression) node).conditional);
+            int index = emitJump(Opcode.JUMP_IF_NOT_TRUE);
+            Compile(((IfExpression) node).consequence);
 
+            if (lastIsPop()) {
+                removeLastPop();
+            }
+
+            int jumpPos = emitJump(Opcode.JUMP);
+
+            int consequenceOffset = instructions.size();
+            patch_jump(index, consequenceOffset);
+
+            if (((IfExpression) node).alternative == null) {
+                emit(Opcode.NIL);
+            } else {
+                Compile(((IfExpression) node).alternative);
+                if (lastIsPop()) {
+                    removeLastPop();
+                }
+            }
+
+            int alternativeOffset = instructions.size();
+            patch_jump(jumpPos, alternativeOffset);
+
+
+        }
+        System.err.println(instructions);
+    }
+    private int emitJump(Opcode opcode) {
+        emit(opcode);
+        instructions.add((byte) 0xff);
+        instructions.add((byte) 0xff);
+        return instructions.size() - 3;
+    }
+
+    private void patch_jump(int index, int offset) {
+        byte first = (byte) ((offset & 0xff00) >> 8);
+        byte second = (byte) (offset & 0x00ff);
+        instructions.set(index + 1, (byte) first);
+        instructions.set(index + 2, (byte) second);
+    }
+
+    private boolean lastIsPop() {
+        byte instruction = instructions.get(instructions.size() - 1);
+        if (instruction == 5) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void removeLastPop() {
+        instructions.remove(instructions.size() - 1);
     }
 
 

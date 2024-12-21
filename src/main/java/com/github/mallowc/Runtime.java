@@ -9,7 +9,6 @@ public class Runtime {
     ArrayList<Byte> instructions;
     ArrayList<MallowObject> constant_pool;
     Stack<MallowObject> STACK;
-    int IP = 0;
     final MallowBoolean TRUE = new MallowBoolean(true);
     final MallowBoolean FALSE = new MallowBoolean(false);
     final MallowNil NIL = new MallowNil();
@@ -95,7 +94,7 @@ public class Runtime {
                     STACK.add(result);
                     break;
                 case 5:
-                    STACK.pop();
+                    System.out.println(STACK.peek().string());
                     break;
                 case 6:
                     STACK.add(TRUE);
@@ -121,17 +120,47 @@ public class Runtime {
                 case 13:
                     executeNegateOperator();
                     break;
+                case 14:
+                    int offset = executeJump(IP + 1, IP + 2);
+                    IP += 2;
+                    if (!isTrue(STACK.pop())) {
+                        IP = offset - 1;
+                    }
+                    break;
+                case 15:
+                    STACK.add(NIL);
+                    break;
+                case 16:
+                    offset = executeJump(IP+1, IP + 2);
+                    IP = offset - 1;
+                    break;
                 default:
                     System.err.println("opcode not implemented");
 
             }
 
-            System.out.print("[ ");
+            /* System.out.print("[ ");
             for (var i : STACK) {
                 System.out.print(i.string() + " ");
             }
             System.out.print("]\n");
+            */
+
         }
+    }
+
+    private boolean isTrue(MallowObject pop) {
+        if (pop instanceof MallowBoolean) {
+            return ((MallowBoolean) pop).value;
+        } else {
+            return true;
+        }
+    }
+
+    private int executeJump(int f, int s) {
+        byte first = instructions.get(f);
+        byte second = instructions.get(s);
+        return (byte) (first << 8 | second);
     }
 
     private void executeNegateOperator() {
