@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Stack;
 
 enum Opcode {
     CONSTANT,
@@ -13,16 +12,8 @@ enum Opcode {
     TRUE, FALSE, EQUAL, NOT_EQUAL, GT, LT, NOT,
     NEGATE,JUMP_IF_NOT_TRUE, NIL, JUMP,
     MODULO, SET_GLOBAL, GET_GLOBAL,
-    CALL, RETURN
+    CALL
 }
-
-class CompilationScope {
-    ArrayList<Byte> instructions;
-    public CompilationScope() {
-        instructions = new ArrayList<Byte>();
-    }
-}
-
 
 class Symbol {
     String name;
@@ -64,10 +55,6 @@ interface MallowObject {
 
 class MallowCompiledFunction implements MallowObject {
     ArrayList<Byte> instructions;
-
-    public MallowCompiledFunction(ArrayList<Byte> ins) {
-        instructions = ins;
-    }
 
     @Override
     public String string() {
@@ -121,37 +108,17 @@ class Bytecode {
 }
 
 public class Compiler {
+    ArrayList<Byte> instructions;
     ArrayList<MallowObject> constant_pool;
-    SymbolTable TABLE;
-    Stack<CompilationScope> scopes;
-    int scopeIndex;
+    SymbolTable TABLE = new SymbolTable();
 
     public Compiler() {
         constant_pool = new ArrayList<MallowObject>();
-        TABLE = new SymbolTable();
-        scopes = new Stack<CompilationScope>();
-        scopes.add(new CompilationScope());
-        scopeIndex = 0;
-    }
-
-    private void enterScope() {
-        scopes.add(new CompilationScope());
-        scopeIndex++;
-    }
-
-    private ArrayList<Byte> leaveScope() {
-        ArrayList<Byte> instructions = currentInstructions();
-        scopes.pop();
-        scopeIndex--;
-        return instructions;
-    }
-
-    private ArrayList<Byte> currentInstructions() {
-        return scopes.get(scopeIndex).instructions;
+        instructions = new ArrayList<Byte>();
     }
 
     public Bytecode bytecode() {
-        return new Bytecode(currentInstructions(), constant_pool);
+        return new Bytecode(instructions, constant_pool);
     }
 
     private byte addConstant(MallowObject obj) {
@@ -160,12 +127,12 @@ public class Compiler {
     }
 
     private void emitConstant(Opcode opcode, byte index) {
-        currentInstructions().add((byte) opcode.ordinal());
-        currentInstructions().add(index);
+        instructions.add((byte) opcode.ordinal());
+        instructions.add(index);
     }
 
     private void emit(Opcode opcode) {
-        currentInstructions().add((byte) opcode.ordinal());
+        instructions.add((byte) opcode.ordinal());
     }
 
     public void Compile(Object node) {
@@ -243,7 +210,7 @@ public class Compiler {
 
             int jumpPos = emitJump(Opcode.JUMP);
 
-            int consequenceOffset = currentInstructions().size();
+            int consequenceOffset = instructions.size();
             patch_jump(index, consequenceOffset);
 
             if (((IfExpression) node).alternative == null) {
@@ -255,7 +222,7 @@ public class Compiler {
                 }
             }
 
-            int alternativeOffset = currentInstructions().size();
+            int alternativeOffset = instructions.size();
             patch_jump(jumpPos, alternativeOffset);
 
 
@@ -271,46 +238,35 @@ public class Compiler {
             } else {
                 emitSymbol(Opcode.GET_GLOBAL, symbol.index);
             }
-        } else if (node instanceof FunctionLiteral) {
-            enterScope();
-            Compile(((FunctionLiteral) node).body);
-            ArrayList<Byte> instructions = leaveScope();
-            instructions.add((byte) Opcode.RETURN.ordinal());
-            MallowCompiledFunction function = new MallowCompiledFunction(instructions);
-            emitConstant(Opcode.CONSTANT, addConstant(function));
-           //  System.err.println("func: " + function.instructions);
-        } else if (node instanceof FunctionApplication) {
-            Compile(((FunctionApplication) node).function);
-            emit(Opcode.CALL);
-
         }
 
 
-        // System.err.println("curr: " + currentInstructions());
+
+        // System.err.println(instructions);
     }
 
     private void emitSymbol(Opcode opcode, int index) {
         emit(opcode);
-        currentInstructions().add((byte) index);
+        instructions.add((byte) index);
     }
 
 
     private int emitJump(Opcode opcode) {
         emit(opcode);
-        currentInstructions().add((byte) 0xff);
-        currentInstructions().add((byte) 0xff);
-        return currentInstructions().size() - 3;
+        instructions.add((byte) 0xff);
+        instructions.add((byte) 0xff);
+        return instructions.size() - 3;
     }
 
     private void patch_jump(int index, int offset) {
         byte first = (byte) ((offset & 0xff00) >> 8);
         byte second = (byte) (offset & 0x00ff);
-        currentInstructions().set(index + 1, (byte) first);
-        currentInstructions().set(index + 2, (byte) second);
+        instructions.set(index + 1, (byte) first);
+        instructions.set(index + 2, (byte) second);
     }
 
     private boolean lastIsPop() {
-        byte instruction = currentInstructions().get(currentInstructions().size() - 1);
+        byte instruction = instructions.get(instructions.size() - 1);
         if (instruction == 5) {
             return true;
         } else {
@@ -319,7 +275,7 @@ public class Compiler {
     }
 
     private void removeLastPop() {
-        currentInstructions().remove(currentInstructions().size() - 1);
+        instructions.remove(instructions.size() - 1);
     }
 
 

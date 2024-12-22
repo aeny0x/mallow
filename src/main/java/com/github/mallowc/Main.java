@@ -25,7 +25,7 @@ public class Main {
         if (!(args.length != 1)) {
             System.err.println("usage: ./mallow <filepath>");
         } else {
-            String source = loadFile("examples/stage4.mallow");
+            String source = loadFile("examples/stage3.mallow");
             Parser parser = new Parser(source);
             Ast program = parser.parseProgram();
             Compiler compiler = new Compiler();
