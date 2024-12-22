@@ -56,7 +56,6 @@ interface MallowObject {
 class MallowCompiledFunction implements MallowObject {
     ArrayList<Byte> instructions;
 
-
     @Override
     public String string() {
         return String.format("compiled function %s" , this.toString());

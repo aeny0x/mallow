@@ -75,7 +75,7 @@ public class Lexer {
 
     private String readIdentifier() {
         int pos = position;
-        while (Character.isLetter(ch) || ch == '?' || Character.isDigit(ch)) {
+        while (Character.isLetter(ch) || ch == '?' || Character.isDigit(ch) || ch == '-') {
             advance();
         }
         return input.substring(pos,position);
@@ -106,6 +106,9 @@ public class Lexer {
         Token tok;
         skipWhiteSpace();
         switch (ch) {
+            case '#':
+                while (ch != '\n' && ch != 0) advance();
+                return nextToken();
             case '"':
                 tok = new Token(TokenType.STRING, readString());
                 break;

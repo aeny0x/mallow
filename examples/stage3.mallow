@@ -1,13 +1,15 @@
 define x as 10 end
 define y as 20 end
 
-define even as
+define x-is-even? as
     x mod 2 = 0
 end
+
+# this is a comment!
 
 define is? as
     if x = y then true else false
 end
 
-even
+x-is-even?
 is?
