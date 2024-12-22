@@ -1,3 +1,17 @@
-define five_plus_ten as
-    lambda x . 10 + 15
+define even? as
+    lambda x . (10 mod 2) = 0
 end
+
+# this function call is not passing 10 as it's argument and the value is constant.
+even? | 10
+
+define even? as
+    lambda x . (15 mod 2) = 0
+end
+
+# this function call is not passing 15 as it's argument and the value is constant.
+even? | 15
+
+even?
+
+# why? arguments and local scopes aren't implemented yet.

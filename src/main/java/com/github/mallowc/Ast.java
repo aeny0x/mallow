@@ -287,6 +287,32 @@ class FunctionLiteral implements Expression {
     }
 }
 
+class FunctionApplication implements Expression {
+    Token token;
+    Expression argument;
+    Expression function;
+
+    public FunctionApplication(Token current, Expression fn) {
+        token = current;
+        function = fn;
+    }
+
+    @Override
+    public void expressionNode() {
+
+    }
+
+    @Override
+    public String tokenLiteral() {
+        return token.literal;
+    }
+
+    @Override
+    public String string() {
+        return "";
+    }
+}
+
 public class Ast implements Node {
     ArrayList<Statement> statements;
 

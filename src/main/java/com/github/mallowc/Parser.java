@@ -61,6 +61,8 @@ public class Parser {
         registerInfix(TokenType.LT, this::parseInfix);
         registerInfix(TokenType.MODULO, this::parseInfix);
 
+        registerInfix(TokenType.PIPE, this::parseCallExpression);
+
 
         /* END PARSE FUNCTIONS   */
 
@@ -125,6 +127,7 @@ public class Parser {
         precedences.put(TokenType.ASTERISK, Precedence.PRODUCT);
         precedences.put(TokenType.SLASH, Precedence.PRODUCT);
         precedences.put(TokenType.MODULO, Precedence.PRODUCT);
+        precedences.put(TokenType.PIPE, Precedence.APPLICATION);
     }
 
     private Precedence peekPrecedence() {
@@ -284,6 +287,14 @@ public class Parser {
         return literal;
 
     }
+
+    Expression parseCallExpression(Expression function) {
+        FunctionApplication expr = new FunctionApplication(current, function);
+        advance();
+        expr.argument = parseExpression(Precedence.LOWEST);
+        return expr;
+    }
+
 
 
     /* END PARSE FUNCTIONS */

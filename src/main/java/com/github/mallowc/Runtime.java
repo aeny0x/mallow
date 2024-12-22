@@ -5,8 +5,21 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Stack;
 
+class Frame {
+    MallowCompiledFunction function;
+    int IP;
+    public Frame(MallowCompiledFunction fn) {
+        function = fn;
+        IP = - 1;
+    }
+    public ArrayList<Byte> instructions() {
+        return function.instructions;
+    }
+}
+
+
+
 public class Runtime {
-    ArrayList<Byte> instructions;
     ArrayList<MallowObject> constant_pool;
     Stack<MallowObject> STACK;
     final MallowBoolean TRUE = new MallowBoolean(true);
@@ -14,13 +27,34 @@ public class Runtime {
     final MallowNil NIL = new MallowNil();
 
     ArrayList<MallowObject> GLOBALS;
+    ArrayList<Frame> FRAMES;
+    int frameIndex;
 
     public Runtime(Bytecode b) {
         STACK = new Stack<MallowObject>();
         constant_pool = b.constant_pool;
-        instructions = b.instructions;
         GLOBALS = new ArrayList<MallowObject>();
+        FRAMES = new ArrayList<Frame>();
+        MallowCompiledFunction mainFn = new MallowCompiledFunction(b.instructions);
+        Frame MAIN_FRAME = new Frame(mainFn);
+        FRAMES.add(MAIN_FRAME);
+        frameIndex = 1;
     }
+
+    private Frame currentFrame() {
+        return FRAMES.get(frameIndex - 1);
+    }
+
+    private void pushFrame(Frame f) {
+        FRAMES.add(frameIndex, f);
+        frameIndex++;
+    }
+
+    private Frame popFrame() {
+        frameIndex--;
+        return FRAMES.get(frameIndex);
+    }
+
 
     private void executeComparison(Byte operation) {
         MallowObject right = STACK.pop();
@@ -63,14 +97,21 @@ public class Runtime {
 
     public void run() {
         MallowInteger a, b ,c , result;
+        int IP;
+        ArrayList<Byte> instructions;
+        byte operation;
 
-        for (int IP = 0; IP < instructions.size(); IP++) {
-            Byte operation = instructions.get(IP);
+        while (currentFrame().IP < currentFrame().instructions().size() - 1) {
+            currentFrame().IP++;
+
+            IP = currentFrame().IP;
+            instructions = currentFrame().instructions();
+            operation = instructions.get(IP);
             switch (operation) {
                 case 0:
                     byte index = instructions.get(IP+1);
                     STACK.add(constant_pool.get(index));
-                    IP += 1;
+                    currentFrame().IP += 1;
                     break;
                 case 1:
                     a = (MallowInteger) STACK.pop();
@@ -125,7 +166,7 @@ public class Runtime {
                     break;
                 case 14:
                     int offset = executeJump(IP + 1, IP + 2);
-                    IP += 2;
+                    currentFrame().IP += 2;
                     if (!isTrue(STACK.pop())) {
                         IP = offset - 1;
                     }
@@ -135,7 +176,7 @@ public class Runtime {
                     break;
                 case 16:
                     offset = executeJump(IP+1, IP + 2);
-                    IP = offset - 1;
+                    currentFrame().IP = offset - 1;
                     break;
                 case 17:
                     a = (MallowInteger) STACK.pop();
@@ -145,26 +186,28 @@ public class Runtime {
                     break;
                 case 18:
                     byte globalIndex = instructions.get(IP+1);
-                    IP += 1;
+                    currentFrame().IP += 1;
                     GLOBALS.add(globalIndex, STACK.pop());
                     break;
                 case 19:
                     globalIndex = instructions.get(IP+1);
-                    IP += 1;
+                    currentFrame().IP += 1;
                     STACK.add(GLOBALS.get(globalIndex));
+                    break;
+                case 20:
+                    MallowCompiledFunction fn = (MallowCompiledFunction) STACK.pop();
+                    Frame f = new Frame(fn);
+                    pushFrame(f);
+                    break;
+                case 21:
+                    MallowObject returnVal = STACK.pop();
+                    popFrame();
+                    STACK.add(returnVal);
                     break;
                 default:
                     System.err.println("opcode not implemented");
 
             }
-
-            /* System.out.print("[ ");
-            for (var i : STACK) {
-                System.out.print(i.string() + " ");
-            }
-            System.out.print("]\n");
-            */
-
         }
     }
 
@@ -177,8 +220,8 @@ public class Runtime {
     }
 
     private int executeJump(int f, int s) {
-        byte first = instructions.get(f);
-        byte second = instructions.get(s);
+        byte first = currentFrame().instructions().get(f);
+        byte second = currentFrame().instructions().get(s);
         return (byte) (first << 8 | second);
     }
 
