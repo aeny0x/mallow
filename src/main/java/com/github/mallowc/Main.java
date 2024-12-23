@@ -2,6 +2,8 @@ package com.github.mallowc;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -15,23 +17,23 @@ public class Main {
                 output.append(s.nextLine()).append('\n');
             }
         } catch (FileNotFoundException e) {
-            System.out.printf("cannot find %s: No such file or directory", filepath);
+            System.out.printf("cannot find %s: No such file or directory\n", filepath);
         }
         return output.toString();
     }
 
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (!(args.length != 1)) {
             System.err.println("usage: ./mallow <filepath>");
         } else {
-            String source = loadFile("examples/stage3.mallow");
-            Parser parser = new Parser(source);
-            Ast program = parser.parseProgram();
-            Compiler compiler = new Compiler();
-            compiler.Compile(program);
-            Runtime VM = new Runtime(compiler.bytecode());
-            VM.run();
+            File[] files = new File("examples/").listFiles();
+            assert files != null;
+            for (File f: files) {
+                System.out.println("FILE: "+ f);
+                String source = loadFile("examples/stage4.mallow"); //+ f.getName());
+                Parser parser = new Parser(source);
+                Ast program = parser.parseProgram();
+            }
         }
     }
 }

@@ -1,3 +1,5 @@
-define five_plus_ten as
-    lambda x . 10 + 15
+define five-plus-ten as
+    lambda x . x
 end
+
+five-plus-ten | 100

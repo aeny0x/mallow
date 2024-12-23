@@ -43,6 +43,7 @@ public class Parser {
         /* BEGIN PARSE FUNCTIONS */
         registerPrefix(TokenType.IDENTIFIER, this::parseIdentifier);
         registerPrefix(TokenType.NUMBER, this::parseInteger);
+        registerPrefix(TokenType.STRING, this::parseString);
         registerPrefix(TokenType.TRUE, this::parseBoolean);
         registerPrefix(TokenType.FALSE, this::parseBoolean);
         registerPrefix(TokenType.NOT, this::parsePrefix);
@@ -60,6 +61,7 @@ public class Parser {
         registerInfix(TokenType.GT, this::parseInfix);
         registerInfix(TokenType.LT, this::parseInfix);
         registerInfix(TokenType.MODULO, this::parseInfix);
+        registerInfix(TokenType.PIPE, this::parseFunctionCall);
 
 
         /* END PARSE FUNCTIONS   */
@@ -67,6 +69,17 @@ public class Parser {
         /* SET CURRENT AND PEEK */
         advance();
         advance();
+    }
+
+    private Expression parseFunctionCall(Expression function) {
+        FunctionCall expr = new FunctionCall(current, function);
+        advance();
+        expr.argument = parseExpression(Precedence.LOWEST);
+        return expr;
+    }
+
+    private Expression parseString() {
+        return new StringLiteral(current, current.literal);
     }
 
     private void advance() {
@@ -125,6 +138,7 @@ public class Parser {
         precedences.put(TokenType.ASTERISK, Precedence.PRODUCT);
         precedences.put(TokenType.SLASH, Precedence.PRODUCT);
         precedences.put(TokenType.MODULO, Precedence.PRODUCT);
+        precedences.put(TokenType.PIPE, Precedence.APPLICATION);
     }
 
     private Precedence peekPrecedence() {

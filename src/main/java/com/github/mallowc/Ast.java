@@ -256,6 +256,30 @@ class IfExpression implements Expression {
     }
 }
 
+class StringLiteral implements Expression {
+    Token token;
+    String value;
+    @Override
+    public void expressionNode() {
+
+    }
+
+    public StringLiteral(Token t, String s) {
+        token = t;
+        value = s;
+    }
+
+    @Override
+    public String tokenLiteral() {
+        return token.literal;
+    }
+
+    @Override
+    public String string() {
+        return value;
+    }
+}
+
 class FunctionLiteral implements Expression {
     Token token;
     Identifier parameter;
@@ -284,6 +308,32 @@ class FunctionLiteral implements Expression {
         out.append(body.string());
         out.append(")");
         return out.toString();
+    }
+}
+
+class FunctionCall implements Expression {
+    Token token;
+    Expression function;
+    Expression argument;
+
+    public FunctionCall(Token current, Expression fn) {
+        token = current;
+        function = fn;
+    }
+
+    @Override
+    public void expressionNode() {
+
+    }
+
+    @Override
+    public String tokenLiteral() {
+        return token.literal;
+    }
+
+    @Override
+    public String string() {
+        return "";
     }
 }
 
