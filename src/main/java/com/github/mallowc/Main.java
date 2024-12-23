@@ -6,12 +6,16 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String source = read_file("examples/stage3.mallow");
-        Enviroment env = new Enviroment();
-        Parser parser = new Parser(source);
-        Ast code = parser.parseProgram();
-        Evaluator evaluator = new Evaluator();
-        MallowObject result = evaluator.eval(code, env);
+        if (args.length != 1) {
+            System.err.println("usage: ./mallow <filepath>");
+        } else {
+            String source = read_file(args[0]);
+            Enviroment env = new Enviroment();
+            Parser parser = new Parser(source);
+            Ast code = parser.parseProgram();
+            Evaluator evaluator = new Evaluator();
+            MallowObject result = evaluator.eval(code, env);
+        }
     }
 
     private static String read_file(String filepath) {

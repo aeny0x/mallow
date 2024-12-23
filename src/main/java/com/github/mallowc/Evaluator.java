@@ -40,6 +40,22 @@ class Enviroment {
 
 }
 
+class MallowString implements MallowObject {
+    String value;
+    @Override
+    public String Type() {
+        return "string";
+    }
+
+    @Override
+    public String Inspect() {
+        return value;
+    }
+
+    public MallowString(String v) {
+        value = v;
+    }
+}
 
 
 class MallowInteger implements MallowObject {
@@ -83,6 +99,7 @@ class MallowFunction implements MallowObject {
 }
 
 class MallowPair implements MallowObject {
+
 
     @Override
     public String Type() {
@@ -170,6 +187,8 @@ public class Evaluator {
             MallowObject result = eval(((PutsStmt) node).value, env);
             System.out.println(result.Inspect());
             return result;
+        } else if (node instanceof StringLiteral) {
+            return new MallowString(((StringLiteral) node).value.replace('\n', ' '));
         }
 
 

@@ -106,9 +106,6 @@ public class Lexer {
         Token tok;
         skipWhiteSpace();
         switch (ch) {
-            case '#':
-                while (ch != '\n' && ch != 0) advance();
-                return nextToken();
             case '"':
                 tok = new Token(TokenType.STRING, readString());
                 break;
