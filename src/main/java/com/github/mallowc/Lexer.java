@@ -75,7 +75,7 @@ public class Lexer {
 
     private String readIdentifier() {
         int pos = position;
-        while (Character.isLetter(ch) || ch == '?' || Character.isDigit(ch) || ch == '-') {
+        while (Character.isLetter(ch) || ch == '?' || Character.isDigit(ch)) {
             advance();
         }
         return input.substring(pos,position);

@@ -49,11 +49,11 @@ class Identifier implements Expression {
 
 class IntegerLiteral implements Expression {
     Token token;
-    BigDecimal value;
+    int value;
 
     public IntegerLiteral(Token current, String literal) {
         token = current;
-        value = BigDecimal.valueOf(Long.parseLong(literal));
+        value = Integer.parseInt(literal);
     }
 
     @Override
@@ -63,7 +63,7 @@ class IntegerLiteral implements Expression {
 
     @Override
     public String string() {
-        return value.toString();
+        return String.valueOf(value);
     }
 
     public String tokenLiteral() {
@@ -336,6 +336,31 @@ class FunctionCall implements Expression {
         return "";
     }
 }
+
+class PutsStmt implements Statement {
+    Token token;
+    Expression value;
+
+    public PutsStmt(Token current) {
+        token = current;
+    }
+
+    @Override
+    public void statementNode() {
+
+    }
+
+    @Override
+    public String tokenLiteral() {
+        return token.literal;
+    }
+
+    @Override
+    public String string() {
+        return value.string();
+    }
+}
+
 
 public class Ast implements Node {
     ArrayList<Statement> statements;

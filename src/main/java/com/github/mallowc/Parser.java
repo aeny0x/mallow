@@ -163,6 +163,8 @@ public class Parser {
         switch (current.type) {
             case DEFINE:
                 return parseDefineStatement();
+            case PUTS:
+                return parsePuts();
             default:
                 return parseExpressionStatement();
         }
@@ -297,6 +299,13 @@ public class Parser {
         literal.body = parseExpression(Precedence.LOWEST);
         return literal;
 
+    }
+
+    PutsStmt parsePuts() {
+        PutsStmt stmt = new PutsStmt(current);
+        advance();
+        stmt.value = parseExpression(Precedence.LOWEST);
+        return stmt;
     }
 
 

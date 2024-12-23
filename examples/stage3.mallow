@@ -1,15 +1,16 @@
-define x as 10 end
-define y as 20 end
-
-define x-is-even? as
-    x mod 2 = 0
+define even? as
+    lambda x . x mod 2 = 0
 end
 
-# this is a comment!
-
-define is? as
-    if x = y then true else false
+define sum as
+    lambda x . lambda y . x + y
 end
 
-x-is-even?
-is?
+puts even? | (sum | 10 ) | 20
+puts even?| 5
+
+define fact as
+    lambda x . if x = 0 then 1 else x * fact | (x-1)
+end
+
+puts fact | 5
