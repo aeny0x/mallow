@@ -1,3 +1,14 @@
+# Installation 
+
+Dependencies: sudo apt install openjdk-17-jdk
+
+git clone https://github.com/aeny0x/mallow.git
+cd mallow
+chmod +x build.sh
+chmod +x install.sh
+./build
+./install
+
 # Code Snippets
 
 ```
