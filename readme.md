@@ -16,7 +16,7 @@ end
 define range as
     lambda low . lambda high .
         if (low > high) then nil else
-            pair low (range (low + 1) high)
+            pair low ((range | (low + 1)) | high)
 end
 ```
 
