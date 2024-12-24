@@ -15,7 +15,7 @@ sudo apt install openjdk-17-jdk
 Clone the project repository to your local machine:
 
 ```bash
-git clone https://github.com/aeny0x/mallow.git mallow-tmp
+git clone https://github.com/aeny0x/mallow.git
 ```
 
 ## 3. Navigate to the Project Directory
@@ -23,7 +23,7 @@ git clone https://github.com/aeny0x/mallow.git mallow-tmp
 Change to the `mallow` directory:
 
 ```bash
-cd mallow-tmp
+cd mallow
 ```
 
 ## 4. Set Execute Permissions
