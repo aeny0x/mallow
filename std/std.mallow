@@ -8,6 +8,7 @@ define empty? as
     lambda list . if list = nil then true else false
 end
 
+
 define length as
     lambda list . if empty? | list then 0 else 1 + length | (cdr list)
 end
@@ -16,3 +17,31 @@ define map as
     lambda fn . lambda list . if empty? | list then nil
         else pair (fn | (car list)) ((map | fn) | (cdr list))
 end
+
+define head as
+	lambda list . car list
+end
+
+define tail as 
+	lambda list . cdr list
+end
+
+define sum as
+	lambda list . if empty? | list then 0 else (car list) + sum | (cdr list)
+end
+
+define product as
+	lambda list . if empty? | list then 1 else (car list) * product | (cdr list)
+end
+
+define square as
+	lambda x . x * x 
+end
+
+define abs as 
+	lambda x . if x > 0 then x else 
+	if x < 0 then -x else 0
+end
+
+
+

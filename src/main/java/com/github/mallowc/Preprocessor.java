@@ -51,7 +51,9 @@ public class Preprocessor {
 
             String libName = matcher.group(1);
 
-            expandedCode.append(read_file("std/"+libName));
+
+            String std_path = System.getenv("MALLOW_PATH");
+            expandedCode.append(read_file(std_path + "/std/" + libName));
 
             // Update the position after the matched include
             lastMatchEnd = matcher.end();
