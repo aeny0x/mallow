@@ -1,6 +1,5 @@
 package com.github.mallowc;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 interface Node {
@@ -361,6 +360,102 @@ class PutsStmt implements Statement {
     }
 }
 
+class NilLiteral implements Expression {
+    Token token;
+    @Override
+    public void expressionNode() {
+
+    }
+
+    @Override
+    public String tokenLiteral() {
+        return "";
+    }
+
+    @Override
+    public String string() {
+        return "";
+    }
+
+    public NilLiteral(Token current) {
+        token = current;
+    }
+
+}
+
+
+class PairExpr implements Expression {
+    Token token;
+    Expression left;
+    Expression right;
+
+    public PairExpr(Token current) {
+        token = current;
+    }
+
+    @Override
+    public void expressionNode() {
+
+    }
+
+    @Override
+    public String tokenLiteral() {
+        return token.literal;
+    }
+
+    @Override
+    public String string() {
+        return "(" +left + " . " + right + ")";
+    }
+}
+
+class CarExpr implements Expression {
+    Token token;
+    Expression list;
+
+    public CarExpr(Token current) {
+        token = current;
+    }
+
+    @Override
+    public void expressionNode() {
+
+    }
+
+    @Override
+    public String tokenLiteral() {
+        return token.literal;
+    }
+
+    @Override
+    public String string() {
+        return "car";
+    }
+}
+
+class CdrExpr implements Expression {
+    Token token;
+    Expression list;
+
+    public CdrExpr(Token current) {
+        token = current;
+    }
+
+    @Override
+    public void expressionNode() {
+
+    }
+
+    @Override
+    public String tokenLiteral() {
+        return token.literal;
+    }
+
+    @Override
+    public String string() {
+        return "cdr";
+    }
+}
 
 public class Ast implements Node {
     ArrayList<Statement> statements;

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Objects;
 
 interface MallowObject {
     String Type();
@@ -99,7 +100,13 @@ class MallowFunction implements MallowObject {
 }
 
 class MallowPair implements MallowObject {
+    MallowObject left;
+    MallowObject right;
 
+    public MallowPair(MallowObject l, MallowObject r) {
+        left = l;
+        right = r;
+    }
 
     @Override
     public String Type() {
@@ -108,7 +115,10 @@ class MallowPair implements MallowObject {
 
     @Override
     public String Inspect() {
-        return "";
+        if (right instanceof MallowNil) {
+            return left.Inspect();
+        }
+        return left.Inspect() + " " + right.Inspect();
     }
 }
 
@@ -185,10 +195,29 @@ public class Evaluator {
             return applyFunc(fn, eval(argument, env));
         } else if (node instanceof PutsStmt) {
             MallowObject result = eval(((PutsStmt) node).value, env);
-            System.out.println(result.Inspect());
+            if (result instanceof MallowPair) {
+                System.out.print("[");
+                System.out.print(result.Inspect());
+                System.out.println("]");
+            } else {
+                System.out.println(result.Inspect());
+            }
+
             return result;
         } else if (node instanceof StringLiteral) {
             return new MallowString(((StringLiteral) node).value.replace('\n', ' '));
+        } else if (node instanceof PairExpr) {
+            MallowObject left = eval(((PairExpr) node).left, env);
+            MallowObject right = eval(((PairExpr) node).right, env);
+            return new MallowPair(left, right);
+        } else if (node instanceof NilLiteral) {
+            return NIL;
+        } else if (node instanceof CarExpr) {
+            MallowPair list = (MallowPair) eval(((CarExpr) node).list, env);
+            return list.left;
+        } else if (node instanceof CdrExpr) {
+            MallowPair list = (MallowPair) eval(((CdrExpr) node).list, env);
+            return list.right;
         }
 
 
@@ -209,6 +238,7 @@ public class Evaluator {
 
     private MallowObject evalIdentifier(Identifier node, Enviroment env) {
         MallowObject val = env.get(node.value);
+
         if (val == null) {
             System.err.printf("identifier not found %s\n", node.value);
             System.exit(1);
@@ -254,6 +284,14 @@ public class Evaluator {
             }
         }
 
+        if (left instanceof MallowNil && right instanceof MallowNil) {
+            switch (operator) {
+                case "=":
+                    return TRUE;
+                case "~=":
+                    return FALSE;
+            }
+        }
 
         return NIL;
 

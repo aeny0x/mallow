@@ -19,7 +19,6 @@ define fib as
     lambda x . if x < 2 then x else (fib | x-1) + (fib | x-2)
 end
 
-
 puts "Hello, World"
 puts fib | 10
 puts fib | 20

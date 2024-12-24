@@ -15,7 +15,6 @@ public class Lexer {
     private void setKeywordTable() {
         keywords.put("define", TokenType.DEFINE);
         keywords.put("as", TokenType.AS);
-        // keywords.put("match", TokenType.MATCH);
         keywords.put("end", TokenType.END);
         keywords.put("puts", TokenType.PUTS);
         keywords.put("true", TokenType.TRUE);
@@ -29,6 +28,9 @@ public class Lexer {
         keywords.put("and", TokenType.AND);
         keywords.put("mod", TokenType.MODULO);
         keywords.put("lambda", TokenType.LAMBDA);
+        keywords.put("pair", TokenType.PAIR);
+        keywords.put("car", TokenType.CAR);
+        keywords.put("cdr", TokenType.CDR);
     }
 
     private TokenType lookUpIdentifier(String s) {
@@ -113,11 +115,7 @@ public class Lexer {
                 tok = new Token(TokenType.PLUS, String.valueOf(ch));
                 break;
             case '-':
-                if (peek() == '>') {
-                    tok = new Token(TokenType.ARROW, "->");
-                } else {
-                    tok = new Token(TokenType.MINUS, String.valueOf(ch));
-                }
+                tok = new Token(TokenType.MINUS, String.valueOf(ch));
                 break;
 
             case '.':
@@ -134,10 +132,6 @@ public class Lexer {
 
             case '|':
                 tok = new Token(TokenType.PIPE, String.valueOf(ch));
-                break;
-
-            case '_':
-                tok = new Token(TokenType.UNDERLINE, String.valueOf(ch));
                 break;
 
             case '=':

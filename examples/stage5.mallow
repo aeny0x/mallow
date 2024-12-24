@@ -1,0 +1,8 @@
+include "std.mallow"
+include "hello.mallow"
+
+/* this is a comment */
+
+puts (range | 10) | 20
+
+

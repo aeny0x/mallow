@@ -46,11 +46,15 @@ public class Parser {
         registerPrefix(TokenType.STRING, this::parseString);
         registerPrefix(TokenType.TRUE, this::parseBoolean);
         registerPrefix(TokenType.FALSE, this::parseBoolean);
+        registerPrefix(TokenType.NIL, this::parseNil);
         registerPrefix(TokenType.NOT, this::parsePrefix);
         registerPrefix(TokenType.MINUS, this::parsePrefix);
         registerPrefix(TokenType.LPAREN, this::parseGrouped);
         registerPrefix(TokenType.IF, this::parseIf);
         registerPrefix(TokenType.LAMBDA, this::parseFunction);
+        registerPrefix(TokenType.PAIR, this::parsePair);
+        registerPrefix(TokenType.CAR, this::parseCar);
+        registerPrefix(TokenType.CDR, this::parseCdr);
 
         registerInfix(TokenType.PLUS, this::parseInfix);
         registerInfix(TokenType.MINUS, this::parseInfix);
@@ -69,6 +73,24 @@ public class Parser {
         /* SET CURRENT AND PEEK */
         advance();
         advance();
+    }
+
+    private Expression parseCdr() {
+        CdrExpr expr = new CdrExpr(current);
+        advance();
+        expr.list = parseExpression(Precedence.LOWEST);
+        return expr;
+    }
+
+    private Expression parseCar() {
+        CarExpr expr = new CarExpr(current);
+        advance();
+        expr.list = parseExpression(Precedence.LOWEST);
+        return expr;
+    }
+
+    private Expression parseNil() {
+        return new NilLiteral(current);
     }
 
     private Expression parseFunctionCall(Expression function) {
@@ -307,6 +329,16 @@ public class Parser {
         stmt.value = parseExpression(Precedence.LOWEST);
         return stmt;
     }
+
+    PairExpr parsePair() {
+        PairExpr expr = new PairExpr(current);
+        advance();
+        expr.left = parseExpression(Precedence.LOWEST);
+        advance();
+        expr.right = parseExpression(Precedence.LOWEST);
+        return expr;
+    }
+
 
 
     /* END PARSE FUNCTIONS */

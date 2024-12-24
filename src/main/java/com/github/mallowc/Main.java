@@ -10,6 +10,8 @@ public class Main {
             System.err.println("usage: ./mallow <filepath>");
         } else {
             String source = read_file(args[0]);
+            Preprocessor preprocessor = new Preprocessor(args[0]);
+            source = preprocessor.include();
             Enviroment env = new Enviroment();
             Parser parser = new Parser(source);
             Ast code = parser.parseProgram();

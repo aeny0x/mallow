@@ -1,0 +1,18 @@
+define range as
+    lambda low . lambda high .
+        if (low > high) then nil else
+            pair low ((range | (low + 1)) | high)
+end
+
+define empty? as
+    lambda list . if list = nil then true else false
+end
+
+define length as
+    lambda list . if empty? | list then 0 else 1 + length | (cdr list)
+end
+
+define map as
+    lambda fn . lambda list . if empty? | list then nil
+        else pair (fn | (car list)) ((map | fn) | (cdr list))
+end

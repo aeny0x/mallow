@@ -24,11 +24,11 @@ public enum TokenType {
     // Characters
     LPAREN, RPAREN,
     PLUS, MINUS, SLASH, ASTERISK,
-    ARROW, UNDERLINE, PIPE,
+    PIPE,
     EQUAL, NOT_EQUAL, LT, GT,
-
+    PAIR,
 
     // Other
     ILLEGAL,
-    EOF, DOT, SEMICOLON,
+    EOF, DOT, SEMICOLON, CAR, CDR,
 }
