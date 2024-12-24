@@ -30,10 +30,6 @@ define sum as
 	lambda list . if empty? | list then 0 else (car list) + sum | (cdr list)
 end
 
-define product as
-	lambda list . if empty? | list then 1 else (car list) * product | (cdr list)
-end
-
 define square as
 	lambda x . x * x 
 end
